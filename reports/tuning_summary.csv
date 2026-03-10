@@ -1,0 +1,5 @@
+model,best_cv_average_precision,best_params
+logistic_regression,0.6614299044509414,"{'select__k': 'all', 'model__class_weight': None, 'model__C': 1.0}"
+mlp,0.6584473354061473,"{'select__k': 35, 'model__learning_rate_init': 0.001, 'model__hidden_layer_sizes': (32,), 'model__batch_size': 64, 'model__alpha': 0.0001}"
+decision_tree,0.6215955235656476,"{'select__k': 25, 'model__min_samples_split': 25, 'model__min_samples_leaf': 5, 'model__max_depth': 6, 'model__class_weight': None}"
+knn,0.5897486817033402,"{'select__k': 35, 'model__weights': 'distance', 'model__p': 1, 'model__n_neighbors': 31}"
