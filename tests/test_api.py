@@ -26,6 +26,15 @@ def test_health(monkeypatch, small_fitted_pipeline_path):
     assert data.get("model_loaded") is True
 
 
+def test_metrics_endpoint(monkeypatch, small_fitted_pipeline_path):
+    monkeypatch.setenv("TELCO_MODEL_PATH", str(small_fitted_pipeline_path))
+    with TestClient(app) as client:
+        r = client.get("/metrics")
+    assert r.status_code == 200
+    assert "text/plain" in r.headers.get("content-type", "")
+    assert "telco_predict_requests_total" in r.text
+
+
 def test_predict_returns_valid_response(monkeypatch, small_fitted_pipeline_path, sample_request_row):
     monkeypatch.setenv("TELCO_MODEL_PATH", str(small_fitted_pipeline_path))
     with TestClient(app) as client:

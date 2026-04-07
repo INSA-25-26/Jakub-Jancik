@@ -102,7 +102,71 @@ python -m uvicorn telco_churn.api:app --reload --host 127.0.0.1 --port 8000
 - Interaktívne API (Swagger): http://127.0.0.1:8000/docs — „Try it out“ na `POST /predict`
 - Alternatívna dokumentácia: http://127.0.0.1:8000/redoc
 - Zdravie: `GET /health`
+- Metriky (Prometheus): `GET /metrics`
 - Predikcia: `POST /predict` (JSON podla `ChurnPredictionRequest` v `src/telco_churn/schemas.py`). Samotné `GET /predict` v prehliadači vráti 405 (povolená je len metóda POST).
+
+## Cast IV — integrovane testovanie a nasadenie
+
+### 1) Dockerfile pre webovu sluzbu
+
+Projekt obsahuje `Dockerfile` pripraveny na build FastAPI sluzby s modelom:
+
+```bash
+docker build -t telco-churn:latest .
+docker run --rm -p 8000:8000 telco-churn:latest
+```
+
+### 2) Metriky (Prometheus/Grafana) a logovanie
+
+- API exportuje metriky na `GET /metrics`
+- Zakladne logovanie je v `src/telco_churn/api.py`
+- Lokalne monitorovanie:
+
+```bash
+docker compose -f docker-compose.monitoring.yml up --build
+```
+
+- App: http://127.0.0.1:8000
+- Prometheus: http://127.0.0.1:9090
+- Grafana: http://127.0.0.1:3000 (admin/admin)
+
+### 3) Testovaci klient
+
+Jednoduchy klient je v `scripts/test_client.py`:
+
+```bash
+python scripts/test_client.py --base-url http://127.0.0.1:8000
+```
+
+### 4) Automaticke testovanie a publikovanie Docker image (GitHub Actions)
+
+Workflow je v `.github/workflows/ci-cd.yml`:
+- job `test`: instalacia + `pytest`
+- job `docker`: build + push image do GHCR (`ghcr.io/<owner>/<repo>/telco-churn`)
+
+### 5) Automaticka konfiguracia VM (Terraform)
+
+Terraform konfiguracia je v `infra/terraform/`:
+
+```bash
+cd infra/terraform
+terraform init
+terraform apply -var "key_name=YOUR_AWS_KEYPAIR_NAME"
+```
+
+Po apply ziskas public IP/DNS vystup VM.
+
+### 6) Automaticke nasadenie sluzby na VM (Ansible)
+
+1. Vytvor inventory z `infra/ansible/inventory.ini.example`
+2. Nastav `app_image` v `infra/ansible/group_vars/all.yml`
+3. Spusti deploy:
+
+```bash
+ansible-playbook -i infra/ansible/inventory.ini infra/ansible/deploy.yml
+```
+
+Po deployi sluzba bezi na `http://<VM_IP>:8000`.
 
 ## Zdroj dat
 

@@ -16,12 +16,14 @@ dependencies = [
     "fastapi>=0.109",
     "uvicorn[standard]>=0.27",
     "pydantic>=2",
+    "prometheus-client>=0.20",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.4",
     "httpx>=0.26",
+    "requests>=2.31",
 ]
 
 [project.scripts]

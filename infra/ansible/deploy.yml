@@ -1,0 +1,45 @@
+---
+- name: Provision VM and deploy telco churn service
+  hosts: app
+  become: true
+  vars:
+    docker_packages:
+      - docker.io
+      - docker-compose-v2
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install Docker packages
+      ansible.builtin.apt:
+        name: "{{ docker_packages }}"
+        state: present
+
+    - name: Ensure Docker service is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Pull app image
+      ansible.builtin.command:
+        cmd: "docker pull {{ app_image }}"
+      changed_when: true
+
+    - name: Remove previous app container
+      ansible.builtin.command:
+        cmd: "docker rm -f {{ app_name }}"
+      failed_when: false
+      changed_when: false
+
+    - name: Run app container
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d --name {{ app_name }}
+          --restart unless-stopped
+          -p {{ app_port }}:8000
+          {{ app_image }}
+      changed_when: true

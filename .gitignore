@@ -36,3 +36,9 @@ Thumbs.db
 
 # Trained pipelines (regenerate with telco-train)
 models/*.joblib
+
+# Terraform / Ansible local state
+*.tfstate
+*.tfstate.*
+.terraform/
+infra/ansible/inventory.ini
