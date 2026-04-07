@@ -143,10 +143,14 @@ python scripts/test_client.py --base-url http://127.0.0.1:8000
 Workflow je v `.github/workflows/ci-cd.yml`:
 - job `test`: instalacia + `pytest`
 - job `docker`: build + push image do AWS ECR (`<account_id>.dkr.ecr.eu-central-1.amazonaws.com/telco-churn`)
+- job `deploy`: automaticky deploy na EC2 cez Ansible po uspesnom docker jobe
 
 Potrebne GitHub Secrets:
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
+- `EC2_HOST` (napr. `18.194.7.20`)
+- `EC2_SSH_USER` (pre Ubuntu AMI je `ubuntu`)
+- `EC2_SSH_PRIVATE_KEY` (obsah `.pem` kluca, nie cesta)
 
 ### 5) Automaticka konfiguracia VM (Terraform)
 
