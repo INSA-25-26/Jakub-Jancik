@@ -36,6 +36,7 @@ Thumbs.db
 
 # Trained pipelines (regenerate with telco-train)
 models/*.joblib
+!models/churn_pipeline.joblib
 
 # Terraform / Ansible local state
 *.tfstate
