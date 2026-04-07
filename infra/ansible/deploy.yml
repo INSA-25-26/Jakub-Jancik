@@ -6,6 +6,7 @@
     docker_packages:
       - docker.io
       - docker-compose-v2
+      - awscli
 
   tasks:
     - name: Update apt cache
@@ -23,6 +24,12 @@
         name: docker
         state: started
         enabled: true
+
+    - name: Authenticate Docker to ECR using instance role
+      ansible.builtin.shell: >-
+        aws ecr get-login-password --region {{ aws_region }} |
+        docker login --username AWS --password-stdin {{ app_image.split('/')[0] }}
+      changed_when: false
 
     - name: Pull app image
       ansible.builtin.command:

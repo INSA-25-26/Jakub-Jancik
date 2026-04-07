@@ -142,7 +142,11 @@ python scripts/test_client.py --base-url http://127.0.0.1:8000
 
 Workflow je v `.github/workflows/ci-cd.yml`:
 - job `test`: instalacia + `pytest`
-- job `docker`: build + push image do GHCR (`ghcr.io/<owner>/<repo>/telco-churn`)
+- job `docker`: build + push image do AWS ECR (`<account_id>.dkr.ecr.eu-central-1.amazonaws.com/telco-churn`)
+
+Potrebne GitHub Secrets:
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
 
 ### 5) Automaticka konfiguracia VM (Terraform)
 

@@ -26,3 +26,9 @@ variable "allowed_ssh_cidr" {
   type        = string
   default     = "0.0.0.0/0"
 }
+
+variable "ecr_repository_name" {
+  description = "ECR repository name for application image."
+  type        = string
+  default     = "telco-churn"
+}
