@@ -99,9 +99,13 @@ jobs:
 
       - name: Deploy to EC2 with Ansible
         run: |
-          ansible-playbook \
+          ansible-playbook -f 1 \
             -i "${{ secrets.EC2_HOST }}," \
             infra/ansible/deploy.yml \
             --user "${{ secrets.EC2_SSH_USER }}" \
             --private-key ~/.ssh/insa-key.pem \
             -e "ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "False"
+          ANSIBLE_FORKS: "1"
+          ANSIBLE_PIPELINING: "False"
