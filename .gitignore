@@ -43,3 +43,4 @@ models/*.joblib
 *.tfstate.*
 .terraform/
 infra/ansible/inventory.ini
+insa-key.pem
