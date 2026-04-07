@@ -175,6 +175,12 @@ ansible-playbook -i infra/ansible/inventory.ini infra/ansible/deploy.yml
 ```
 
 Po deployi sluzba bezi na `http://<VM_IP>:8000`.
+Po tom istom deployi bezia aj:
+- Prometheus: `http://<VM_IP>:9090`
+- Grafana: `http://<VM_IP>:3000` (admin/admin)
+- Grafana dashboardy sa natahaju automaticky:
+  - `Telco API Overview` (requests, errors, latency)
+  - `Telco VM Overview` (CPU, RAM, disk, network)
 
 ## Zdroj dat
 

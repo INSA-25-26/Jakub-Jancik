@@ -1,4 +1,8 @@
-app_image: ACCOUNT_ID.dkr.ecr.eu-central-1.amazonaws.com/telco-churn:latest
+app_image: 880255525779.dkr.ecr.eu-central-1.amazonaws.com/telco-churn:latest
 app_name: telco-churn-app
 app_port: 8000
 aws_region: eu-central-1
+prometheus_name: telco-prometheus
+prometheus_port: 9090
+grafana_name: telco-grafana
+grafana_port: 3000
