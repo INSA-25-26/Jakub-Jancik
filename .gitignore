@@ -4,6 +4,7 @@
 
 # Python
 __pycache__/
+*.egg-info/
 *.py[cod]
 *$py.class
 *.so
@@ -32,3 +33,6 @@ Thumbs.db
 # Environment variables
 .env
 .env.local
+
+# Trained pipelines (regenerate with telco-train)
+models/*.joblib
