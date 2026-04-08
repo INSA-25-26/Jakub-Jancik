@@ -130,6 +130,37 @@ docker compose -f docker-compose.monitoring.yml up --build
 - Prometheus: http://127.0.0.1:9090
 - Grafana: http://127.0.0.1:3000 (admin/admin)
 
+### 2b) Reverzny proxy server s HTTPS (Caddy)
+
+Pre nasadenie s automatickym TLS certifikatom (Let's Encrypt) a "cistymi" URL cestami je pripraveny:
+- `docker-compose.caddy.yml`
+- `ops/caddy/Caddyfile`
+
+Postup:
+
+1. Vytvor `.env` zo sablony:
+
+```bash
+cp .env.example .env
+```
+
+2. Nastav v `.env`:
+- `DOMAIN` na verejnu domenu smerujucu A/AAAA zaznamom na VM
+- `ACME_EMAIL` na email pre Let's Encrypt
+
+3. Spusti stack:
+
+```bash
+docker compose -f docker-compose.caddy.yml up -d --build
+```
+
+Po spusteni:
+- Hlavna app: `https://<DOMAIN>/`
+- Grafana: `https://<DOMAIN>/grafana`
+- Prometheus: `https://<DOMAIN>/prometheus`
+- Presmerovanie `https://<DOMAIN>/swagger` -> `https://<DOMAIN>/docs`
+- Presmerovanie `https://<DOMAIN>/healthz` -> `https://<DOMAIN>/health`
+
 ### 3) Testovaci klient
 
 Jednoduchy klient je v `scripts/test_client.py`:
