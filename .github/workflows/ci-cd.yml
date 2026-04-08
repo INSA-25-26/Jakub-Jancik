@@ -105,6 +105,8 @@ jobs:
             -c paramiko \
             --user "${{ secrets.EC2_SSH_USER }}" \
             --private-key ~/.ssh/insa-key.pem \
+            -e "caddy_domain=${{ secrets.DOMAIN }}" \
+            -e "acme_email=${{ secrets.ACME_EMAIL }}" \
             -e "ansible_ssh_common_args=-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
         env:
           ANSIBLE_HOST_KEY_CHECKING: "False"

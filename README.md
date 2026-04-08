@@ -182,6 +182,8 @@ Potrebne GitHub Secrets:
 - `EC2_HOST` (napr. `18.194.7.20`)
 - `EC2_SSH_USER` (pre Ubuntu AMI je `ubuntu`)
 - `EC2_SSH_PRIVATE_KEY` (obsah `.pem` kluca, nie cesta)
+- `DOMAIN` (napr. `churn.example.com`, DNS smerujuci na EC2)
+- `ACME_EMAIL` (email pre Let's Encrypt ACME registraciu)
 
 ### 5) Automaticka konfiguracia VM (Terraform)
 
