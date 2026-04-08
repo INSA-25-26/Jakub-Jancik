@@ -385,7 +385,11 @@ PREDICTION_PAGE_HTML = """<!DOCTYPE html>
     <div id="result" role="status" aria-live="polite"></div>
 
     <footer>
-      <a href="/docs">OpenAPI / Swagger</a> · <a href="/redoc">ReDoc</a> · <a href="/health">Health</a>
+      <a href="/docs">OpenAPI / Swagger</a> ·
+      <a href="/redoc">ReDoc</a> ·
+      <a href="/health">Health</a> ·
+      <a href="/grafana/">Grafana</a> ·
+      <a href="/prometheus/">Prometheus</a>
     </footer>
   </div>
 

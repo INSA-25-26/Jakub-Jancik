@@ -212,7 +212,7 @@
               reverse_proxy {{ grafana_name }}:3000
             }
 
-            handle /prometheus* {
+            handle_path /prometheus* {
               reverse_proxy {{ prometheus_name }}:9090
             }
 
