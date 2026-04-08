@@ -145,6 +145,8 @@
           -v /opt/telco-monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
           prom/prometheus:latest
           --config.file=/etc/prometheus/prometheus.yml
+          --web.external-url=/prometheus
+          --web.route-prefix=/
       changed_when: true
 
     - name: Run node-exporter container
@@ -175,6 +177,8 @@
           -p {{ grafana_port }}:3000
           -e GF_SECURITY_ADMIN_USER=admin
           -e GF_SECURITY_ADMIN_PASSWORD=admin
+          -e GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/grafana/
+          -e GF_SERVER_SERVE_FROM_SUB_PATH=true
           -v /opt/telco-monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
           -v /opt/telco-monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
           grafana/grafana:latest
@@ -201,6 +205,8 @@
 
             redir /swagger /docs 308
             redir /healthz /health 308
+            redir /grafana /grafana/ 308
+            redir /prometheus /prometheus/ 308
 
             handle /grafana* {
               reverse_proxy {{ grafana_name }}:3000

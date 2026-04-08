@@ -215,6 +215,10 @@ Po tom istom deployi bezia aj:
   - `Telco API Overview` (requests, errors, latency)
   - `Telco VM Overview` (CPU, RAM, disk, network)
 
+Pri deployi s Caddy su monitoring endpointy dostupne ako:
+- `https://<DOMAIN>/grafana/`
+- `https://<DOMAIN>/prometheus/`
+
 ## Zdroj dat
 
 - Telco Customer Churn (CSV): `data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv`
