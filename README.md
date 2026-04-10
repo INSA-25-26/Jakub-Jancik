@@ -155,11 +155,11 @@ docker compose -f docker-compose.caddy.yml up -d --build
 ```
 
 Po spusteni:
-- Hlavna app: `https://<DOMAIN>/`
-- Grafana: `https://<DOMAIN>/grafana`
-- Prometheus: `https://<DOMAIN>/prometheus`
-- Presmerovanie `https://<DOMAIN>/swagger` -> `https://<DOMAIN>/docs`
-- Presmerovanie `https://<DOMAIN>/healthz` -> `https://<DOMAIN>/health`
+- Hlavna app: `https://kubik-agent.space/`
+- Grafana: `https://kubik-agent.space/grafana`
+- Prometheus: `https://kubik-agent.space/prometheus`
+- Presmerovanie `https://kubik-agent.space/swagger` -> `https://kubik-agent.space/docs`
+- Presmerovanie `https:/kubik-agent.space/healthz` -> `https://kubik-agent.space/health`
 
 ### 3) Testovaci klient
 
@@ -182,7 +182,7 @@ Potrebne GitHub Secrets:
 - `EC2_HOST` (napr. `18.194.7.20`)
 - `EC2_SSH_USER` (pre Ubuntu AMI je `ubuntu`)
 - `EC2_SSH_PRIVATE_KEY` (obsah `.pem` kluca, nie cesta)
-- `DOMAIN` (napr. `churn.example.com`, DNS smerujuci na EC2)
+- `DOMAIN` (napr. `kubik-agent.space`, DNS smerujuci na EC2)
 - `ACME_EMAIL` (email pre Let's Encrypt ACME registraciu)
 
 ### 5) Automaticka konfiguracia VM (Terraform)
@@ -216,9 +216,13 @@ Po tom istom deployi bezia aj:
   - `Telco VM Overview` (CPU, RAM, disk, network)
 
 Pri deployi s Caddy su monitoring endpointy dostupne ako:
-- `https://<DOMAIN>/grafana/`
-- `https://<DOMAIN>/prometheus/`
+- `https://kubik-agent.space/grafana/`
+- `https://kubik-agent.space/prometheus/`
 
 ## Zdroj dat
 
 - Telco Customer Churn (CSV): `data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv`
+
+Napojenie na VM:
+
+ssh -i "C:\Users\kuboj\Desktop\INSA zadanie\insa-key.pem" ubuntu@18.194.7.20
