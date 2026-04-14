@@ -70,6 +70,20 @@
         - /opt/telco-monitoring/caddy/data
         - /opt/telco-monitoring/caddy/config
 
+    - name: Ensure Loki data directories are writable by container user
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "10001"
+        group: "10001"
+        mode: "0755"
+      loop:
+        - /opt/telco-monitoring/loki
+        - /opt/telco-monitoring/loki/chunks
+        - /opt/telco-monitoring/loki/rules
+        - /opt/telco-monitoring/loki/index
+        - /opt/telco-monitoring/loki/index_cache
+
     - name: Remove previous app container
       ansible.builtin.command:
         cmd: "docker rm -f {{ app_name }}"
