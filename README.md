@@ -119,7 +119,8 @@ docker run --rm -p 8000:8000 telco-churn:latest
 ### 2) Metriky (Prometheus/Grafana) a logovanie
 
 - API exportuje metriky na `GET /metrics`
-- Zakladne logovanie je v `src/telco_churn/api.py`
+- Logovanie je zapisovane aj do suboru v kontajneri (`/var/log/telco/app.log`)
+- Loki + Promtail zbieraju logy a v Grafane su dostupne cez datasource `Loki`
 - Lokalne monitorovanie:
 
 ```bash
@@ -129,6 +130,13 @@ docker compose -f docker-compose.monitoring.yml up --build
 - App: http://127.0.0.1:8000
 - Prometheus: http://127.0.0.1:9090
 - Grafana: http://127.0.0.1:3000 (admin/admin)
+- Loki API: http://127.0.0.1:3100
+
+Logy v Grafane:
+- otvor `Explore`
+- datasource nastav na `Loki`
+- query priklad: `{app="telco-churn-api"}`
+- pre historiu logov posuvaj casove okno (napr. Last 24 hours / Last 7 days)
 
 ### 2b) Reverzny proxy server s HTTPS (Caddy)
 
@@ -218,6 +226,8 @@ Po tom istom deployi bezia aj:
 Pri deployi s Caddy su monitoring endpointy dostupne ako:
 - `https://kubik-agent.space/grafana/`
 - `https://kubik-agent.space/prometheus/`
+
+V `https://kubik-agent.space/grafana/` otvor `Explore` a vyber datasource `Loki` pre prehliadanie historie logov.
 
 ## Zdroj dat
 

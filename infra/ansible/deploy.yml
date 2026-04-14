@@ -36,6 +36,23 @@
         cmd: "docker pull {{ app_image }}"
       changed_when: true
 
+    - name: Ensure monitoring config and data directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - /opt/telco-monitoring/prometheus
+        - /opt/telco-monitoring/grafana/provisioning/datasources
+        - /opt/telco-monitoring/grafana/provisioning/dashboards
+        - /opt/telco-monitoring/grafana/dashboards
+        - /opt/telco-monitoring/loki
+        - /opt/telco-monitoring/promtail
+        - /opt/telco-monitoring/logs
+        - /opt/telco-monitoring/caddy
+        - /opt/telco-monitoring/caddy/data
+        - /opt/telco-monitoring/caddy/config
+
     - name: Remove previous app container
       ansible.builtin.command:
         cmd: "docker rm -f {{ app_name }}"
@@ -47,28 +64,11 @@
         cmd: >-
           docker run -d --name {{ app_name }}
           --restart unless-stopped
+          -e TELCO_LOG_PATH=/var/log/telco/app.log
+          -v /opt/telco-monitoring/logs:/var/log/telco
           -p {{ app_port }}:8000
           {{ app_image }}
       changed_when: true
-
-    - name: Ensure Prometheus config directory exists
-      ansible.builtin.file:
-        path: /opt/telco-monitoring/prometheus
-        state: directory
-        mode: "0755"
-
-    - name: Ensure Grafana provisioning directories exist
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        mode: "0755"
-      loop:
-        - /opt/telco-monitoring/grafana/provisioning/datasources
-        - /opt/telco-monitoring/grafana/provisioning/dashboards
-        - /opt/telco-monitoring/grafana/dashboards
-        - /opt/telco-monitoring/caddy
-        - /opt/telco-monitoring/caddy/data
-        - /opt/telco-monitoring/caddy/config
 
     - name: Write Prometheus config file
       ansible.builtin.copy:
@@ -86,6 +86,18 @@
             - job_name: "node-exporter"
               static_configs:
                 - targets: ["node-exporter:9100"]
+
+    - name: Copy Loki config file
+      ansible.builtin.copy:
+        src: files/monitoring/loki/loki-config.yml
+        dest: /opt/telco-monitoring/loki/loki-config.yml
+        mode: "0644"
+
+    - name: Copy Promtail config file
+      ansible.builtin.copy:
+        src: files/monitoring/promtail/promtail-config.yml
+        dest: /opt/telco-monitoring/promtail/promtail-config.yml
+        mode: "0644"
 
     - name: Copy Grafana datasource provisioning
       ansible.builtin.copy:
@@ -135,6 +147,18 @@
       failed_when: false
       changed_when: false
 
+    - name: Remove previous Loki container
+      ansible.builtin.command:
+        cmd: "docker rm -f {{ loki_name }}"
+      failed_when: false
+      changed_when: false
+
+    - name: Remove previous Promtail container
+      ansible.builtin.command:
+        cmd: "docker rm -f {{ promtail_name }}"
+      failed_when: false
+      changed_when: false
+
     - name: Run Prometheus container
       ansible.builtin.command:
         cmd: >-
@@ -160,6 +184,32 @@
           -v /:/host:ro,rslave
           quay.io/prometheus/node-exporter:latest
           --path.rootfs=/host
+      changed_when: true
+
+    - name: Run Loki container
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d --name {{ loki_name }}
+          --restart unless-stopped
+          --network telco-monitoring
+          -p {{ loki_port }}:3100
+          -v /opt/telco-monitoring/loki/loki-config.yml:/etc/loki/config.yml:ro
+          -v /opt/telco-monitoring/loki:/loki
+          grafana/loki:2.9.8
+          -config.file=/etc/loki/config.yml
+      changed_when: true
+
+    - name: Run Promtail container
+      ansible.builtin.command:
+        cmd: >-
+          docker run -d --name {{ promtail_name }}
+          --restart unless-stopped
+          --network telco-monitoring
+          -v /opt/telco-monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+          -v /opt/telco-monitoring/logs:/var/log/telco:ro
+          -v /opt/telco-monitoring/promtail:/tmp
+          grafana/promtail:2.9.8
+          -config.file=/etc/promtail/config.yml
       changed_when: true
 
     - name: Remove previous Grafana container

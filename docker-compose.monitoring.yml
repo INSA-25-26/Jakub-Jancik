@@ -4,8 +4,36 @@ services:
   app:
     build: .
     container_name: telco-churn-app
+    environment:
+      - TELCO_LOG_PATH=/var/log/telco/app.log
+    volumes:
+      - app_logs:/var/log/telco
     ports:
       - "8000:8000"
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:2.9.8
+    container_name: telco-loki
+    command: ["-config.file=/etc/loki/config.yml"]
+    volumes:
+      - ./ops/loki/loki-config.yml:/etc/loki/config.yml:ro
+      - loki_data:/loki
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:2.9.8
+    container_name: telco-promtail
+    command: ["-config.file=/etc/promtail/config.yml"]
+    volumes:
+      - ./ops/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - app_logs:/var/log/telco:ro
+      - promtail_positions:/tmp
+    depends_on:
+      - app
+      - loki
     restart: unless-stopped
 
   prometheus:
@@ -29,6 +57,14 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./ops/grafana/provisioning:/etc/grafana/provisioning:ro
     depends_on:
       - prometheus
+      - loki
     restart: unless-stopped
+
+volumes:
+  app_logs:
+  loki_data:
+  promtail_positions:

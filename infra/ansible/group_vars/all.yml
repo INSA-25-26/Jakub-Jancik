@@ -6,6 +6,9 @@ prometheus_name: telco-prometheus
 prometheus_port: 9090
 grafana_name: telco-grafana
 grafana_port: 3000
+loki_name: telco-loki
+loki_port: 3100
+promtail_name: telco-promtail
 caddy_name: telco-caddy
 caddy_domain: ""
 acme_email: ""

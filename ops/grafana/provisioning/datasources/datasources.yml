@@ -5,12 +5,13 @@ datasources:
     uid: prometheus
     type: prometheus
     access: proxy
-    url: http://telco-prometheus:9090
+    url: http://prometheus:9090
     isDefault: true
     editable: true
+
   - name: Loki
     uid: loki
     type: loki
     access: proxy
-    url: http://telco-loki:3100
+    url: http://loki:3100
     editable: true

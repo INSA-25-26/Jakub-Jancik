@@ -6,6 +6,7 @@ import logging
 import os
 import time
 from contextlib import asynccontextmanager
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 import joblib
@@ -19,11 +20,40 @@ from telco_churn.prediction_ui import PREDICTION_PAGE_HTML
 from telco_churn.schemas import ChurnPredictionRequest, ChurnPredictionResponse
 
 logger = logging.getLogger("telco_churn.api")
-if not logger.handlers:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s %(message)s",
+LOG_FILE_PATH = Path(os.environ.get("TELCO_LOG_PATH", "logs/app.log"))
+
+
+def configure_logging() -> None:
+    """Configure app logging to stdout and rotating file."""
+    LOG_FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+
+    has_stream = any(type(handler) is logging.StreamHandler for handler in root_logger.handlers)
+    has_file = any(
+        isinstance(handler, RotatingFileHandler)
+        and Path(handler.baseFilename).resolve() == LOG_FILE_PATH.resolve()
+        for handler in root_logger.handlers
     )
+
+    if not has_stream:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        root_logger.addHandler(stream_handler)
+
+    if not has_file:
+        file_handler = RotatingFileHandler(
+            filename=LOG_FILE_PATH,
+            maxBytes=10_000_000,
+            backupCount=20,
+            encoding="utf-8",
+        )
+        file_handler.setFormatter(formatter)
+        root_logger.addHandler(file_handler)
+
+
+configure_logging()
 
 PREDICT_REQUESTS_TOTAL = Counter(
     "telco_predict_requests_total",
