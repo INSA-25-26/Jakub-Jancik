@@ -7,6 +7,13 @@
       - docker.io
       - docker-compose-v2
       - awscli
+    monitoring_images:
+      - prom/prometheus:latest
+      - quay.io/prometheus/node-exporter:latest
+      - grafana/loki:2.9.8
+      - grafana/promtail:2.9.8
+      - grafana/grafana:latest
+      - caddy:2
 
   tasks:
     - name: Update apt cache
@@ -35,6 +42,16 @@
       ansible.builtin.command:
         cmd: "docker pull {{ app_image }}"
       changed_when: true
+
+    - name: Pull monitoring images with retry
+      ansible.builtin.command:
+        cmd: "docker pull {{ item }}"
+      register: monitoring_pull_result
+      retries: 3
+      delay: 5
+      until: monitoring_pull_result.rc == 0
+      changed_when: true
+      loop: "{{ monitoring_images }}"
 
     - name: Ensure monitoring config and data directories exist
       ansible.builtin.file:
