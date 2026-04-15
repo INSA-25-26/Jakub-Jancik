@@ -10,6 +10,9 @@ clients:
 
 scrape_configs:
   - job_name: telco-app-filelogs
+    pipeline_stages:
+      - drop:
+          expression: 'GET /(health|metrics|docs|redoc)(\\?.*)? '
     static_configs:
       - targets:
           - localhost

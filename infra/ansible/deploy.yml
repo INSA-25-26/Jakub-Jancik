@@ -83,6 +83,7 @@
         - /opt/telco-monitoring/loki/rules
         - /opt/telco-monitoring/loki/index
         - /opt/telco-monitoring/loki/index_cache
+        - /opt/telco-monitoring/loki/compactor
 
     - name: Remove previous app container
       ansible.builtin.command:
